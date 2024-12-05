@@ -10,7 +10,7 @@ export default function GameList() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:5000/api/v1/games");
+        const res = await axios.get("https://diamond365-backend.onrender.com/api/v1/games");
         setGames(res.data.data)
       } catch (error) {
         console.log(error);

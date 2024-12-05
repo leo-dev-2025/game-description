@@ -17,7 +17,7 @@ export default function Editor() {
   } 
 
   useEffect(()=>{
-        axios.get("http://localhost:5000/api/v1/games/"+queryParams.get('id')).then((res)=>{
+        axios.get("https://diamond365-backend.onrender.com/api/v1/games/"+queryParams.get('id')).then((res)=>{
             console.log(res.data);
             setContent(res.data.data.game.description)
             setGame(res.data.data.game)
@@ -28,7 +28,7 @@ export default function Editor() {
 
   const handleDescriptionSubmit =( ) =>{
     setUpdating(true);
-    axios.put("http://localhost:5000/api/v1/games/"+queryParams.get('id'),{
+    axios.put("https://diamond365-backend.onrender.com/api/v1/games/"+queryParams.get('id'),{
         description:content
     }).then((res)=>{
         console.log(res.data);     
