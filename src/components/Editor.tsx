@@ -4,6 +4,9 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Game } from '../types/types';
 
+// const baseURL_local = "http://localhost:5000";
+const baseURL = "https://diamond365-backend.onrender.com"
+
 export default function Editor() {
   const [content, setContent] = useState('');
   const location = useLocation();
@@ -17,7 +20,7 @@ export default function Editor() {
   } 
 
   useEffect(()=>{
-        axios.get("https://diamond365-backend.onrender.com/api/v1/games/"+queryParams.get('id')).then((res)=>{
+        axios.get(baseURL+"/api/v1/games/"+queryParams.get('id')).then((res)=>{
             console.log(res.data);
             setContent(res.data.data.game.description)
             setGame(res.data.data.game)
@@ -28,7 +31,7 @@ export default function Editor() {
 
   const handleDescriptionSubmit =( ) =>{
     setUpdating(true);
-    axios.put("https://diamond365-backend.onrender.com/api/v1/games/"+queryParams.get('id'),{
+    axios.put(baseURL+"/api/v1/games/"+queryParams.get('id'),{
         description:content
     }).then((res)=>{
         console.log(res.data);     
@@ -42,7 +45,7 @@ export default function Editor() {
         </button>
       <div className={`flex gap-[1rem] py-[.5rem] cursor-pointer transition-all`} >
             <div className=''>
-                <img className='w-[8rem] rounded-lg' src={"http://127.0.0.1:5000/"+game?.image?.url} alt="" />
+                <img className='w-[8rem] rounded-lg' src={baseURL+"/"+game?.image?.url} alt="" />
             </div>
             <div>
                 <div className='flex-1'><span className='font-semibold mr-[1rem]'>Id:</span>{game?.id}</div>
