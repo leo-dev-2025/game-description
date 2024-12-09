@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import QuillEditor from './QuillEditor';
+// import QuillEditor from './QuillEditor';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Game } from '../types/types';
@@ -14,11 +14,39 @@ export default function Editor() {
   const [game,setGame] = useState<Game>()
   const [updating,setUpdating] = useState(false);
 
-  const handleContentChange = (updatedContent: string) => {
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const updatedContent = e.target.value; // assuming this is how you want to update the content
     setContent(updatedContent);
     console.log('Updated Content:', updatedContent);
-  } 
+  }
 
+  const wordHtmlMap = {
+    "Game Overview": '<h1 className="" style="font-size:1.3rem; margin-top:1rem; margin-bottom:.5rem;">Game Overview</h1>',
+    "How to Play": '<h1 style="font-size:1.3rem; margin-top:1rem; margin-bottom:.5rem;">How to Play</h1>',
+    "log in or create an account here": '<a  style="color: #DCBE5A;" href="https://diamond365.vercel.app/auth" target="_blank">log in or create an account here</a>',
+    "Diamond365 India": '<a style="color: #DCBE5A;" href="https://diamond365.vercel.app/" target="_blank">Diamond365 India</a>',
+    "Place Your Bet":"<strong>Place Your Bet</strong>",
+    "Side Bets (Optional)":"<strong>Side Bets (Optional)</strong>",
+    "Wait for the Draw":"<strong>Wait for the Draw</strong>",
+    "Win Real Money":"<strong>Win Real Money</strong>",
+    "Main Bet":"<strong>Main Bet</strong>",
+    "Side Bets":"<strong>Side Bets</strong>",
+    "Card Matching":"<strong>Card Matching</strong>",
+    "Payouts":"<strong>Payouts</strong>",
+    "break":"<br/>"
+
+  };
+  
+  // Function to analyze and transform text
+  const analyzeAndTransform = (inputString:string) => {
+    let outputHtml = inputString;
+    for (const [word, htmlWrapper] of Object.entries(wordHtmlMap)) {
+      const regex = new RegExp(`\\b${word}\\b`, 'gi'); // Match whole words, case-insensitive
+      outputHtml = outputHtml.replace(regex, htmlWrapper);
+    }
+    return outputHtml;
+  }
+  
   useEffect(()=>{
         axios.get(baseURL+"/api/v1/games/"+queryParams.get('id')).then((res)=>{
             console.log(res.data);
@@ -31,8 +59,9 @@ export default function Editor() {
 
   const handleDescriptionSubmit =( ) =>{
     setUpdating(true);
+    const improvedContent = analyzeAndTransform(content);
     axios.put(baseURL+"/api/v1/games/"+queryParams.get('id'),{
-        description:content
+        description:improvedContent
     }).then((res)=>{
         console.log(res.data);     
         setUpdating(false);
@@ -55,18 +84,10 @@ export default function Editor() {
                 <div className='flex-1'><span className='font-semibold mr-[1rem]'>type:</span>{game?.gameType?.name}</div>
                 <div className='flex-1'><span className='font-semibold mr-[1rem]'>provider:</span>{game?.provider?.name}</div>
             </div>
-        </div>
-      <QuillEditor value={content} onChange={handleContentChange} />
-      <div className="mt-8 ">
-        <h2 className="text-xl font-semibold">Rendered HTML Content:</h2> 
-        <div
-          className="border p-4 mt-2 bg-gray-100 text-black"
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
-        <div>
-          
-        </div>
-      </div>
+        </div>      
+        <textarea className='w-full h-[60vh] bg-zinc-200 p-[1rem] rounded-md mt-[1rem] shadow-2xl' value={content} onChange={(e)=>handleContentChange(e)} id=""></textarea>
+        <div dangerouslySetInnerHTML={{ __html: analyzeAndTransform(content) }}/>
+        
     </div>
   )
 }

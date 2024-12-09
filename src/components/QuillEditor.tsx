@@ -15,7 +15,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
     if (quillRef.current && !editorInstance.current) {
       // Initialize Quill editor
       editorInstance.current = new Quill(quillRef.current, {
-        theme: 'snow',
+        theme: "snow",
         modules: {
           toolbar: [
             [{ header: [1, 2, false] }],
